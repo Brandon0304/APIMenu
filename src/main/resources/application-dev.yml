@@ -1,0 +1,11 @@
+spring:
+  jpa:
+    show-sql: true
+  devtools:
+    restart:
+      enabled: true
+
+logging:
+  level:
+    com.restaurant.menu: DEBUG
+    org.hibernate.SQL: DEBUG
