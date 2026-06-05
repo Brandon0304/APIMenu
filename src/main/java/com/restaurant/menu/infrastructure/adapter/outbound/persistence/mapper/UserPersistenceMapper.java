@@ -4,34 +4,32 @@ import com.restaurant.menu.domain.model.User;
 import com.restaurant.menu.domain.model.UserId;
 import com.restaurant.menu.domain.model.UserRole;
 import com.restaurant.menu.infrastructure.adapter.outbound.persistence.UserJpaEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import java.util.UUID;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface UserPersistenceMapper {
+@Component
+public class UserPersistenceMapper {
 
-    @Mapping(target = "password", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    UserJpaEntity toJpaEntity(User domain);
-
-    @Mapping(target = "password", source = "password")
-    User toDomain(UserJpaEntity jpaEntity);
-
-    default String roleToString(UserRole role) {
-        return role != null ? role.name() : null;
+    public UserJpaEntity toJpaEntity(User domain) {
+        if (domain == null) return null;
+        UserJpaEntity entity = new UserJpaEntity();
+        entity.setId(domain.id().value());
+        entity.setEmail(domain.email());
+        entity.setName(domain.name());
+        entity.setRole(domain.role().name());
+        entity.setActive(domain.active());
+        return entity;
     }
 
-    default UserRole stringToRole(String role) {
-        return role != null ? UserRole.valueOf(role) : null;
-    }
-
-    default UserId uuidToUserId(java.util.UUID uuid) {
-        return uuid != null ? new UserId(uuid) : null;
-    }
-
-    default java.util.UUID userIdToUuid(UserId id) {
-        return id != null ? id.value() : null;
+    public User toDomain(UserJpaEntity jpaEntity) {
+        if (jpaEntity == null) return null;
+        return new User(
+            new UserId(jpaEntity.getId()),
+            jpaEntity.getEmail(),
+            jpaEntity.getPassword(),
+            jpaEntity.getName(),
+            UserRole.valueOf(jpaEntity.getRole()),
+            jpaEntity.isActive()
+        );
     }
 }

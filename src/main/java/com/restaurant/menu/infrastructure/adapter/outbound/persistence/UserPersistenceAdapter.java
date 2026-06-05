@@ -5,6 +5,7 @@ import com.restaurant.menu.domain.model.UserId;
 import com.restaurant.menu.domain.port.outbound.UserRepositoryPort;
 import com.restaurant.menu.infrastructure.adapter.outbound.persistence.mapper.UserPersistenceMapper;
 import org.springframework.stereotype.Component;
+import java.time.Instant;
 import java.util.Optional;
 
 @Component
@@ -32,6 +33,9 @@ public class UserPersistenceAdapter implements UserRepositoryPort {
     public User save(User user) {
         UserJpaEntity entity = mapper.toJpaEntity(user);
         entity.setPassword(user.password());
+        Instant now = Instant.now();
+        entity.setCreatedAt(now);
+        entity.setUpdatedAt(now);
         UserJpaEntity saved = jpaRepository.save(entity);
         return mapper.toDomain(saved);
     }
