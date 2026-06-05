@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
@@ -55,7 +56,7 @@ public class MenuItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<MenuItemResponse>> getById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<MenuItemResponse>> getById(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id) {
         MenuItemResult result = useCases.getById(new MenuItemId(id));
         return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
     }
@@ -77,7 +78,7 @@ public class MenuItemController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<MenuItemResponse>> update(
-            @PathVariable UUID id, @Valid @RequestBody UpdateMenuItemRequest request) {
+            @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Valid @RequestBody UpdateMenuItemRequest request) {
         MenuItemResult result = useCases.update(new MenuItemId(id), mapper.toCommand(request));
         return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
     }
@@ -85,14 +86,14 @@ public class MenuItemController {
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<MenuItemResponse>> updateStatus(
-            @PathVariable UUID id, @RequestBody boolean active) {
+            @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @RequestBody boolean active) {
         MenuItemResult result = useCases.updateStatus(new MenuItemId(id), active);
         return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id) {
         useCases.delete(new MenuItemId(id));
         return ResponseEntity.noContent().build();
     }
@@ -100,7 +101,7 @@ public class MenuItemController {
     @PostMapping("/{id}/ingredients")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> addIngredient(
-            @PathVariable UUID id, @Valid @RequestBody AddIngredientRequest request) {
+            @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Valid @RequestBody AddIngredientRequest request) {
         useCases.addIngredient(new MenuItemId(id),
             new IngredientId(request.ingredientId()), request.quantity().doubleValue());
         return ResponseEntity.created(URI.create("/api/v1/menu-items/" + id + "/ingredients")).build();
@@ -108,35 +109,35 @@ public class MenuItemController {
 
     @DeleteMapping("/{id}/ingredients/{ingredientId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> removeIngredient(@PathVariable UUID id, @PathVariable UUID ingredientId) {
+    public ResponseEntity<Void> removeIngredient(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID ingredientId) {
         useCases.removeIngredient(new MenuItemId(id), new IngredientId(ingredientId));
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/modifier-groups")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> assignModifierGroup(@PathVariable UUID id, @RequestBody UUID modifierGroupId) {
+    public ResponseEntity<Void> assignModifierGroup(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @RequestBody UUID modifierGroupId) {
         useCases.assignModifierGroup(new MenuItemId(id), new ModifierGroupId(modifierGroupId));
         return ResponseEntity.created(URI.create("/api/v1/menu-items/" + id + "/modifier-groups")).build();
     }
 
     @DeleteMapping("/{id}/modifier-groups/{groupId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> removeModifierGroup(@PathVariable UUID id, @PathVariable UUID groupId) {
+    public ResponseEntity<Void> removeModifierGroup(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID groupId) {
         useCases.removeModifierGroup(new MenuItemId(id), new ModifierGroupId(groupId));
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/allergens")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> addAllergen(@PathVariable UUID id, @RequestBody UUID allergenId) {
+    public ResponseEntity<Void> addAllergen(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @RequestBody UUID allergenId) {
         useCases.addAllergen(new MenuItemId(id), new AllergenId(allergenId));
         return ResponseEntity.created(URI.create("/api/v1/menu-items/" + id + "/allergens")).build();
     }
 
     @DeleteMapping("/{id}/allergens/{allergenId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> removeAllergen(@PathVariable UUID id, @PathVariable UUID allergenId) {
+    public ResponseEntity<Void> removeAllergen(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID allergenId) {
         useCases.removeAllergen(new MenuItemId(id), new AllergenId(allergenId));
         return ResponseEntity.noContent().build();
     }
@@ -144,7 +145,7 @@ public class MenuItemController {
     @PutMapping("/{id}/nutritional-info")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<NutritionalInfoResponse>> updateNutritionalInfo(
-            @PathVariable UUID id, @Valid @RequestBody UpdateNutritionalInfoRequest request) {
+            @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Valid @RequestBody UpdateNutritionalInfoRequest request) {
         var command = new com.restaurant.menu.domain.model.dto.UpdateNutritionalInfoCommand(
             request.calories(), request.proteinGrams(), request.carbsGrams(),
             request.fatGrams(), request.fiberGrams(), request.sodiumMg());

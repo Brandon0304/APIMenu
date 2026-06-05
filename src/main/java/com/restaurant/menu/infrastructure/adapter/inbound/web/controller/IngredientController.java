@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
@@ -46,7 +47,7 @@ public class IngredientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<IngredientResponse>> getById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<IngredientResponse>> getById(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id) {
         IngredientResult result = useCases.getById(new IngredientId(id));
         return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
     }
@@ -60,14 +61,14 @@ public class IngredientController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<IngredientResponse>> update(
-            @PathVariable UUID id, @Valid @RequestBody UpdateIngredientRequest request) {
+            @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Valid @RequestBody UpdateIngredientRequest request) {
         IngredientResult result = useCases.update(new IngredientId(id), mapper.toCommand(request));
         return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id) {
         useCases.delete(new IngredientId(id));
         return ResponseEntity.noContent().build();
     }

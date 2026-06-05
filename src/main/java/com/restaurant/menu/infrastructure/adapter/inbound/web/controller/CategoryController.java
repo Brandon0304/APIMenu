@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
@@ -48,7 +49,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<CategoryResponse>> getById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<CategoryResponse>> getById(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id) {
         CategoryResult result = useCases.getById(new CategoryId(id));
         return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
     }
@@ -63,7 +64,7 @@ public class CategoryController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CategoryResponse>> update(
-            @PathVariable UUID id, @Valid @RequestBody UpdateCategoryRequest request) {
+            @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Valid @RequestBody UpdateCategoryRequest request) {
         CategoryResult result = useCases.update(new CategoryId(id), mapper.toCommand(request));
         return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
     }
@@ -71,14 +72,14 @@ public class CategoryController {
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CategoryResponse>> updateStatus(
-            @PathVariable UUID id, @RequestBody boolean active) {
+            @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @RequestBody boolean active) {
         CategoryResult result = useCases.updateStatus(new CategoryId(id), active);
         return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id) {
         useCases.delete(new CategoryId(id));
         return ResponseEntity.noContent().build();
     }

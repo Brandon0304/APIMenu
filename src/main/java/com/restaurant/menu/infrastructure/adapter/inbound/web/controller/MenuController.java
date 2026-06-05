@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
@@ -50,7 +51,7 @@ public class MenuController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<MenuResponse>> getById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<MenuResponse>> getById(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id) {
         MenuResult result = useCases.getById(new MenuId(id));
         return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
     }
@@ -64,14 +65,14 @@ public class MenuController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<MenuResponse>> update(
-            @PathVariable UUID id, @Valid @RequestBody UpdateMenuRequest request) {
+            @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Valid @RequestBody UpdateMenuRequest request) {
         MenuResult result = useCases.update(new MenuId(id), mapper.toCommand(request));
         return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id) {
         useCases.delete(new MenuId(id));
         return ResponseEntity.noContent().build();
     }
@@ -79,7 +80,7 @@ public class MenuController {
     @PostMapping("/{id}/sections")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<com.restaurant.menu.infrastructure.adapter.inbound.web.dto.response.MenuSectionResponse>> addSection(
-            @PathVariable UUID id, @Valid @RequestBody AddMenuSectionRequest request) {
+            @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Valid @RequestBody AddMenuSectionRequest request) {
         MenuSectionResult result = useCases.addSection(new MenuId(id),
             new com.restaurant.menu.domain.model.CategoryId(request.categoryId()), request.displayOrder());
         return ResponseEntity.created(URI.create("/api/v1/menus/" + id + "/sections/" + result.id().value()))
@@ -88,7 +89,7 @@ public class MenuController {
 
     @DeleteMapping("/{id}/sections/{sectionId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> removeSection(@PathVariable UUID id, @PathVariable UUID sectionId) {
+    public ResponseEntity<Void> removeSection(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID sectionId) {
         useCases.removeSection(new MenuId(id), new MenuSectionId(sectionId));
         return ResponseEntity.noContent().build();
     }

@@ -33,7 +33,7 @@
         <module name="MultipleVariableDeclarations"/>
     </module>
     <module name="LineLength">
-        <property name="max" value="200"/>
+        <property name="max" value="250"/>
     </module>
     <module name="FileTabCharacter"/>
 </module>

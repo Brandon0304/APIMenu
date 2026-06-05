@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
@@ -29,7 +30,7 @@ public class AllergenController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<AllergenResponse>> getById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<AllergenResponse>> getById(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id) {
         AllergenResult result = useCases.getById(new AllergenId(id));
         return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
     }

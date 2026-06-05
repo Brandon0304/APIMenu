@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
@@ -51,7 +52,7 @@ public class ModifierGroupController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ModifierGroupResponse>> getById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<ModifierGroupResponse>> getById(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id) {
         ModifierGroupResult result = useCases.getById(new ModifierGroupId(id));
         return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
     }
@@ -65,14 +66,14 @@ public class ModifierGroupController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ModifierGroupResponse>> update(
-            @PathVariable UUID id, @Valid @RequestBody UpdateModifierGroupRequest request) {
+            @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Valid @RequestBody UpdateModifierGroupRequest request) {
         ModifierGroupResult result = useCases.update(new ModifierGroupId(id), mapper.toCommand(request));
         return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id) {
         useCases.delete(new ModifierGroupId(id));
         return ResponseEntity.noContent().build();
     }
@@ -80,7 +81,7 @@ public class ModifierGroupController {
     @PostMapping("/{id}/options")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ModifierOptionResponse>> addOption(
-            @PathVariable UUID id, @Valid @RequestBody CreateModifierOptionRequest request) {
+            @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Valid @RequestBody CreateModifierOptionRequest request) {
         ModifierOptionResult result = useCases.addOption(new ModifierGroupId(id),
             new com.restaurant.menu.domain.model.dto.CreateModifierOptionCommand(
                 request.name(), new com.restaurant.menu.domain.model.Price(request.priceAdjustment())));
@@ -91,7 +92,7 @@ public class ModifierGroupController {
     @PutMapping("/{id}/options/{optionId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ModifierOptionResponse>> updateOption(
-            @PathVariable UUID id, @PathVariable UUID optionId,
+            @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID optionId,
             @Valid @RequestBody UpdateModifierOptionRequest request) {
         ModifierOptionResult result = useCases.updateOption(new ModifierGroupId(id), new ModifierOptionId(optionId),
             new com.restaurant.menu.domain.model.dto.UpdateModifierOptionCommand(
@@ -101,7 +102,7 @@ public class ModifierGroupController {
 
     @DeleteMapping("/{id}/options/{optionId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> removeOption(@PathVariable UUID id, @PathVariable UUID optionId) {
+    public ResponseEntity<Void> removeOption(@Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID id, @Parameter(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6") @PathVariable UUID optionId) {
         useCases.removeOption(new ModifierGroupId(id), new ModifierOptionId(optionId));
         return ResponseEntity.noContent().build();
     }
