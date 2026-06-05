@@ -1,0 +1,99 @@
+package com.restaurant.menu.infrastructure.adapter.inbound.web.controller;
+
+import com.restaurant.menu.domain.model.ModifierGroupId;
+import com.restaurant.menu.domain.model.ModifierOptionId;
+import com.restaurant.menu.domain.model.dto.ModifierGroupResult;
+import com.restaurant.menu.domain.model.dto.ModifierOptionResult;
+import com.restaurant.menu.domain.port.inbound.ModifierGroupUseCases;
+import com.restaurant.menu.infrastructure.adapter.inbound.web.dto.request.CreateModifierGroupRequest;
+import com.restaurant.menu.infrastructure.adapter.inbound.web.dto.request.CreateModifierOptionRequest;
+import com.restaurant.menu.infrastructure.adapter.inbound.web.dto.request.UpdateModifierGroupRequest;
+import com.restaurant.menu.infrastructure.adapter.inbound.web.dto.request.UpdateModifierOptionRequest;
+import com.restaurant.menu.infrastructure.adapter.inbound.web.dto.response.ModifierGroupResponse;
+import com.restaurant.menu.infrastructure.adapter.inbound.web.dto.response.ModifierOptionResponse;
+import com.restaurant.menu.infrastructure.adapter.inbound.web.mapper.ModifierGroupApiMapper;
+import com.restaurant.menu.shared.dto.ApiResponse;
+import jakarta.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/v1/modifier-groups")
+public class ModifierGroupController {
+
+    private final ModifierGroupUseCases useCases;
+    private final ModifierGroupApiMapper mapper;
+
+    public ModifierGroupController(ModifierGroupUseCases useCases, ModifierGroupApiMapper mapper) {
+        this.useCases = useCases;
+        this.mapper = mapper;
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<ModifierGroupResponse>> create(@Valid @RequestBody CreateModifierGroupRequest request) {
+        ModifierGroupResult result = useCases.create(mapper.toCommand(request));
+        return ResponseEntity.created(URI.create("/api/v1/modifier-groups/" + result.id().value()))
+            .body(ApiResponse.of(mapper.toResponse(result)));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<ModifierGroupResponse>> getById(@PathVariable UUID id) {
+        ModifierGroupResult result = useCases.getById(new ModifierGroupId(id));
+        return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<ModifierGroupResponse>>> getAll() {
+        List<ModifierGroupResult> results = useCases.getAll();
+        return ResponseEntity.ok(ApiResponse.of(results.stream().map(mapper::toResponse).toList()));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<ModifierGroupResponse>> update(
+            @PathVariable UUID id, @Valid @RequestBody UpdateModifierGroupRequest request) {
+        ModifierGroupResult result = useCases.update(new ModifierGroupId(id), mapper.toCommand(request));
+        return ResponseEntity.ok(ApiResponse.of(mapper.toResponse(result)));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        useCases.delete(new ModifierGroupId(id));
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/options")
+    public ResponseEntity<ApiResponse<ModifierOptionResponse>> addOption(
+            @PathVariable UUID id, @Valid @RequestBody CreateModifierOptionRequest request) {
+        ModifierOptionResult result = useCases.addOption(new ModifierGroupId(id),
+            new com.restaurant.menu.domain.model.dto.CreateModifierOptionCommand(
+                request.name(), new com.restaurant.menu.domain.model.Price(request.priceAdjustment())));
+        return ResponseEntity.created(URI.create("/api/v1/modifier-groups/" + id + "/options/" + result.id().value()))
+            .body(ApiResponse.of(mapper.toOptionResponse(result)));
+    }
+
+    @PutMapping("/{id}/options/{optionId}")
+    public ResponseEntity<ApiResponse<ModifierOptionResponse>> updateOption(
+            @PathVariable UUID id, @PathVariable UUID optionId,
+            @Valid @RequestBody UpdateModifierOptionRequest request) {
+        ModifierOptionResult result = useCases.updateOption(new ModifierGroupId(id), new ModifierOptionId(optionId),
+            new com.restaurant.menu.domain.model.dto.UpdateModifierOptionCommand(
+                request.name(), new com.restaurant.menu.domain.model.Price(request.priceAdjustment())));
+        return ResponseEntity.ok(ApiResponse.of(mapper.toOptionResponse(result)));
+    }
+
+    @DeleteMapping("/{id}/options/{optionId}")
+    public ResponseEntity<Void> removeOption(@PathVariable UUID id, @PathVariable UUID optionId) {
+        useCases.removeOption(new ModifierGroupId(id), new ModifierOptionId(optionId));
+        return ResponseEntity.noContent().build();
+    }
+}
