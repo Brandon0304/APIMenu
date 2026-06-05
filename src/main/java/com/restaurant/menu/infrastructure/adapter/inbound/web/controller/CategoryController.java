@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,6 +37,7 @@ public class CategoryController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CategoryResponse>> create(@Valid @RequestBody CreateCategoryRequest request) {
         CategoryResult result = useCases.create(mapper.toCommand(request));
         CategoryResponse response = mapper.toResponse(result);
@@ -57,6 +59,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CategoryResponse>> update(
             @PathVariable UUID id, @Valid @RequestBody UpdateCategoryRequest request) {
         CategoryResult result = useCases.update(new CategoryId(id), mapper.toCommand(request));
@@ -64,6 +67,7 @@ public class CategoryController {
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CategoryResponse>> updateStatus(
             @PathVariable UUID id, @RequestBody boolean active) {
         CategoryResult result = useCases.updateStatus(new CategoryId(id), active);
@@ -71,6 +75,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         useCases.delete(new CategoryId(id));
         return ResponseEntity.noContent().build();

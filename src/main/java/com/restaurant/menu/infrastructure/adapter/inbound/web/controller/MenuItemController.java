@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -44,6 +45,7 @@ public class MenuItemController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<MenuItemResponse>> create(@Valid @RequestBody CreateMenuItemRequest request) {
         MenuItemResult result = useCases.create(mapper.toCommand(request));
         return ResponseEntity.created(URI.create("/api/v1/menu-items/" + result.id().value()))
@@ -71,6 +73,7 @@ public class MenuItemController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<MenuItemResponse>> update(
             @PathVariable UUID id, @Valid @RequestBody UpdateMenuItemRequest request) {
         MenuItemResult result = useCases.update(new MenuItemId(id), mapper.toCommand(request));
@@ -78,6 +81,7 @@ public class MenuItemController {
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<MenuItemResponse>> updateStatus(
             @PathVariable UUID id, @RequestBody boolean active) {
         MenuItemResult result = useCases.updateStatus(new MenuItemId(id), active);
@@ -85,12 +89,14 @@ public class MenuItemController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         useCases.delete(new MenuItemId(id));
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/ingredients")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> addIngredient(
             @PathVariable UUID id, @Valid @RequestBody AddIngredientRequest request) {
         useCases.addIngredient(new MenuItemId(id),
@@ -99,36 +105,42 @@ public class MenuItemController {
     }
 
     @DeleteMapping("/{id}/ingredients/{ingredientId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> removeIngredient(@PathVariable UUID id, @PathVariable UUID ingredientId) {
         useCases.removeIngredient(new MenuItemId(id), new IngredientId(ingredientId));
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/modifier-groups")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> assignModifierGroup(@PathVariable UUID id, @RequestBody UUID modifierGroupId) {
         useCases.assignModifierGroup(new MenuItemId(id), new ModifierGroupId(modifierGroupId));
         return ResponseEntity.created(URI.create("/api/v1/menu-items/" + id + "/modifier-groups")).build();
     }
 
     @DeleteMapping("/{id}/modifier-groups/{groupId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> removeModifierGroup(@PathVariable UUID id, @PathVariable UUID groupId) {
         useCases.removeModifierGroup(new MenuItemId(id), new ModifierGroupId(groupId));
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/allergens")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> addAllergen(@PathVariable UUID id, @RequestBody UUID allergenId) {
         useCases.addAllergen(new MenuItemId(id), new AllergenId(allergenId));
         return ResponseEntity.created(URI.create("/api/v1/menu-items/" + id + "/allergens")).build();
     }
 
     @DeleteMapping("/{id}/allergens/{allergenId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> removeAllergen(@PathVariable UUID id, @PathVariable UUID allergenId) {
         useCases.removeAllergen(new MenuItemId(id), new AllergenId(allergenId));
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/nutritional-info")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<NutritionalInfoResponse>> updateNutritionalInfo(
             @PathVariable UUID id, @Valid @RequestBody UpdateNutritionalInfoRequest request) {
         var command = new com.restaurant.menu.domain.model.dto.UpdateNutritionalInfoCommand(

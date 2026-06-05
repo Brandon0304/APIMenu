@@ -18,6 +18,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +41,7 @@ public class ModifierGroupController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ModifierGroupResponse>> create(@Valid @RequestBody CreateModifierGroupRequest request) {
         ModifierGroupResult result = useCases.create(mapper.toCommand(request));
         return ResponseEntity.created(URI.create("/api/v1/modifier-groups/" + result.id().value()))
@@ -59,6 +61,7 @@ public class ModifierGroupController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ModifierGroupResponse>> update(
             @PathVariable UUID id, @Valid @RequestBody UpdateModifierGroupRequest request) {
         ModifierGroupResult result = useCases.update(new ModifierGroupId(id), mapper.toCommand(request));
@@ -66,12 +69,14 @@ public class ModifierGroupController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         useCases.delete(new ModifierGroupId(id));
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/options")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ModifierOptionResponse>> addOption(
             @PathVariable UUID id, @Valid @RequestBody CreateModifierOptionRequest request) {
         ModifierOptionResult result = useCases.addOption(new ModifierGroupId(id),
@@ -82,6 +87,7 @@ public class ModifierGroupController {
     }
 
     @PutMapping("/{id}/options/{optionId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ModifierOptionResponse>> updateOption(
             @PathVariable UUID id, @PathVariable UUID optionId,
             @Valid @RequestBody UpdateModifierOptionRequest request) {
@@ -92,6 +98,7 @@ public class ModifierGroupController {
     }
 
     @DeleteMapping("/{id}/options/{optionId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> removeOption(@PathVariable UUID id, @PathVariable UUID optionId) {
         useCases.removeOption(new ModifierGroupId(id), new ModifierOptionId(optionId));
         return ResponseEntity.noContent().build();

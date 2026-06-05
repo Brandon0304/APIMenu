@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +40,7 @@ public class MenuController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<MenuResponse>> create(@Valid @RequestBody CreateMenuRequest request) {
         MenuResult result = useCases.create(mapper.toCommand(request));
         return ResponseEntity.created(URI.create("/api/v1/menus/" + result.id().value()))
@@ -58,6 +60,7 @@ public class MenuController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<MenuResponse>> update(
             @PathVariable UUID id, @Valid @RequestBody UpdateMenuRequest request) {
         MenuResult result = useCases.update(new MenuId(id), mapper.toCommand(request));
@@ -65,12 +68,14 @@ public class MenuController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         useCases.delete(new MenuId(id));
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/sections")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<com.restaurant.menu.infrastructure.adapter.inbound.web.dto.response.MenuSectionResponse>> addSection(
             @PathVariable UUID id, @Valid @RequestBody AddMenuSectionRequest request) {
         MenuSectionResult result = useCases.addSection(new MenuId(id),
@@ -80,6 +85,7 @@ public class MenuController {
     }
 
     @DeleteMapping("/{id}/sections/{sectionId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> removeSection(@PathVariable UUID id, @PathVariable UUID sectionId) {
         useCases.removeSection(new MenuId(id), new MenuSectionId(sectionId));
         return ResponseEntity.noContent().build();

@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,7 @@ public class IngredientController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<IngredientResponse>> create(@Valid @RequestBody CreateIngredientRequest request) {
         IngredientResult result = useCases.create(mapper.toCommand(request));
         return ResponseEntity.created(URI.create("/api/v1/ingredients/" + result.id().value()))
@@ -54,6 +56,7 @@ public class IngredientController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<IngredientResponse>> update(
             @PathVariable UUID id, @Valid @RequestBody UpdateIngredientRequest request) {
         IngredientResult result = useCases.update(new IngredientId(id), mapper.toCommand(request));
@@ -61,6 +64,7 @@ public class IngredientController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         useCases.delete(new IngredientId(id));
         return ResponseEntity.noContent().build();
