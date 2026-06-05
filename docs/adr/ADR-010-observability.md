@@ -1,6 +1,6 @@
 # ADR-010: Estrategia de Observabilidad (Logs, Métricas, Trazas)
 
-## Status: Propuesto
+## Status: Aceptado
 
 ## Contexto
 

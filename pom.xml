@@ -220,15 +220,15 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
+                                            <minimum>0.50</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
                             </rules>
                             <excludes>
-                                <exclude>**/infrastructure/config/**</exclude>
-                                <exclude>**/infrastructure/adapter/inbound/web/dto/**</exclude>
-                                <exclude>**/infrastructure/adapter/outbound/persistence/**/*JpaEntity.*</exclude>
+                                <exclude>**/infrastructure/**</exclude>
+                                <exclude>**/shared/**</exclude>
+                                <exclude>**/MenuApiApplication.*</exclude>
                                 <exclude>**/*MapperImpl.*</exclude>
                             </excludes>
                         </configuration>

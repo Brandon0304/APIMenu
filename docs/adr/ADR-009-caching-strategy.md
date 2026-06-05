@@ -1,6 +1,6 @@
 # ADR-009: Estrategia de Cacheo
 
-## Status: Propuesto
+## Status: Aceptado
 
 ## Contexto
 

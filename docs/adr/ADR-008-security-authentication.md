@@ -1,6 +1,6 @@
 # ADR-008: Estrategia de Seguridad y Autenticación
 
-## Status: Propuesto
+## Status: Aceptado
 
 ## Contexto
 
