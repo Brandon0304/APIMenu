@@ -18,14 +18,14 @@ public class OpenApiConfig {
             .scheme("bearer")
             .bearerFormat("JWT")
             .in(SecurityScheme.In.HEADER)
-            .name("Authorization");
+            .name("Authorization")
+            .description("JWT token. Roles: ADMIN (full access), VIEWER (read-only), KITCHEN (kitchen operations). Obtain via POST /api/v1/auth/login or POST /api/v1/auth/register");
 
         return new OpenAPI()
             .info(new Info()
                 .title("Menu API")
-                .description("REST API for managing restaurant menus")
+                .description("REST API for managing restaurant menus\n\nRoles: ADMIN (full access), VIEWER (read-only), KITCHEN (kitchen operations)")
                 .version("1.0.0"))
-            .addSecurityItem(new SecurityRequirement().addList("bearer-jwt"))
             .components(new Components()
                 .addSecuritySchemes("bearer-jwt", bearerScheme));
     }
