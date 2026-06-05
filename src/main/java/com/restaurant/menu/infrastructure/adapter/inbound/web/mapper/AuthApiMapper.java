@@ -17,7 +17,15 @@ public class AuthApiMapper {
     }
 
     public RegisterCommand toRegisterCommand(RegisterRequest request) {
-        return new RegisterCommand(request.email(), request.password(), request.name(), UserRole.VIEWER);
+        UserRole role = UserRole.VIEWER;
+        if (request.role() != null && !request.role().isBlank()) {
+            try {
+                role = UserRole.valueOf(request.role().trim().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                role = UserRole.VIEWER;
+            }
+        }
+        return new RegisterCommand(request.email(), request.password(), request.name(), role);
     }
 
     public LoginResponse toResponse(LoginResult result) {
