@@ -1,5 +1,6 @@
 package com.restaurant.menu.infrastructure.adapter.inbound.web.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import com.restaurant.menu.infrastructure.adapter.inbound.web.dto.request.LoginRequest;
 import com.restaurant.menu.infrastructure.adapter.inbound.web.dto.request.RegisterRequest;
 import com.restaurant.menu.infrastructure.adapter.inbound.web.dto.response.LoginResponse;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@SecurityRequirements({})
 public class AuthController {
 
     private final AuthenticationUseCases authUseCases;
