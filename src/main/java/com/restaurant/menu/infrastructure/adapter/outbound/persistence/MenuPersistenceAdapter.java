@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,12 +30,14 @@ public class MenuPersistenceAdapter implements MenuRepositoryPort {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "menus", key = "#id.value().toString()")
     public Optional<Menu> findById(MenuId id) {
         return repository.findById(id.value()).map(mapper::toDomain);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "menus", key = "'all-' + #activeOnly")
     public List<Menu> findAll(boolean activeOnly) {
         if (activeOnly) {
             return repository.findAll().stream()
@@ -44,6 +49,10 @@ public class MenuPersistenceAdapter implements MenuRepositoryPort {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(value = "menus", allEntries = true),
+        @CacheEvict(value = "menuItems", allEntries = true)
+    })
     public Menu save(Menu menu) {
         MenuJpaEntity entity = mapper.toJpaEntity(menu);
         boolean isNew = entity.getId() == null || !repository.existsById(entity.getId());
@@ -66,6 +75,10 @@ public class MenuPersistenceAdapter implements MenuRepositoryPort {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(value = "menus", allEntries = true),
+        @CacheEvict(value = "menuItems", allEntries = true)
+    })
     public void deleteById(MenuId id) {
         sectionRepository.deleteByMenuId(id.value());
         repository.deleteById(id.value());

@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,17 +27,20 @@ public class IngredientPersistenceAdapter implements IngredientRepositoryPort {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "ingredients", key = "#id.value().toString()")
     public Optional<Ingredient> findById(IngredientId id) {
         return repository.findById(id.value()).map(mapper::toDomain);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "ingredients", key = "'all'")
     public List<Ingredient> findAll() {
         return repository.findAll().stream().map(mapper::toDomain).collect(Collectors.toList());
     }
 
     @Override
+    @CacheEvict(value = "ingredients", allEntries = true)
     public Ingredient save(Ingredient ingredient) {
         IngredientJpaEntity entity = mapper.toJpaEntity(ingredient);
         boolean isNew = entity.getId() == null || !repository.existsById(entity.getId());
@@ -48,6 +53,7 @@ public class IngredientPersistenceAdapter implements IngredientRepositoryPort {
     }
 
     @Override
+    @CacheEvict(value = "ingredients", allEntries = true)
     public void deleteById(IngredientId id) {
         repository.deleteById(id.value());
     }

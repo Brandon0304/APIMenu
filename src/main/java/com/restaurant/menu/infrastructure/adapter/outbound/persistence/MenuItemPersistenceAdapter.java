@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,12 +48,14 @@ public class MenuItemPersistenceAdapter implements MenuItemRepositoryPort {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "menuItems", key = "#id.value().toString()")
     public Optional<MenuItem> findById(MenuItemId id) {
         return repository.findById(id.value()).map(mapper::toDomain);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "menuItems", key = "'all-' + #page + '-' + #size")
     public List<MenuItem> findAll(int page, int size) {
         return repository.findAll(PageRequest.of(page, size)).stream()
             .map(mapper::toDomain)
@@ -59,6 +64,7 @@ public class MenuItemPersistenceAdapter implements MenuItemRepositoryPort {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "menuItems", key = "'byCategory-' + #categoryId.value().toString()")
     public List<MenuItem> findByCategoryId(CategoryId categoryId) {
         return repository.findByCategoryId(categoryId.value()).stream()
             .map(mapper::toDomain)
@@ -66,6 +72,10 @@ public class MenuItemPersistenceAdapter implements MenuItemRepositoryPort {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(value = "menuItems", allEntries = true),
+        @CacheEvict(value = "menus", allEntries = true)
+    })
     public MenuItem save(MenuItem menuItem) {
         MenuItemJpaEntity entity = mapper.toJpaEntity(menuItem);
         boolean isNew = entity.getId() == null || !repository.existsById(entity.getId());
@@ -105,6 +115,10 @@ public class MenuItemPersistenceAdapter implements MenuItemRepositoryPort {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(value = "menuItems", allEntries = true),
+        @CacheEvict(value = "menus", allEntries = true)
+    })
     public void deleteById(MenuItemId id) {
         UUID uuid = id.value();
         ingredientJoinRepository.deleteByMenuItemId(uuid);

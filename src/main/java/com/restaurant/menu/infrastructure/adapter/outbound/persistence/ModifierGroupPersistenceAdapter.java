@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,17 +27,20 @@ public class ModifierGroupPersistenceAdapter implements ModifierGroupRepositoryP
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "modifierGroups", key = "#id.value().toString()")
     public Optional<ModifierGroup> findById(ModifierGroupId id) {
         return repository.findById(id.value()).map(mapper::toDomain);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "modifierGroups", key = "'all'")
     public List<ModifierGroup> findAll() {
         return repository.findAll().stream().map(mapper::toDomain).collect(Collectors.toList());
     }
 
     @Override
+    @CacheEvict(value = "modifierGroups", allEntries = true)
     public ModifierGroup save(ModifierGroup modifierGroup) {
         ModifierGroupJpaEntity entity = mapper.toJpaEntity(modifierGroup);
         boolean isNew = entity.getId() == null || !repository.existsById(entity.getId());
@@ -55,6 +60,7 @@ public class ModifierGroupPersistenceAdapter implements ModifierGroupRepositoryP
     }
 
     @Override
+    @CacheEvict(value = "modifierGroups", allEntries = true)
     public void deleteById(ModifierGroupId id) {
         repository.deleteById(id.value());
     }

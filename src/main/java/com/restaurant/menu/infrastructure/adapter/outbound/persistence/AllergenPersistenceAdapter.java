@@ -7,6 +7,7 @@ import com.restaurant.menu.infrastructure.adapter.outbound.persistence.mapper.Al
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,12 +25,14 @@ public class AllergenPersistenceAdapter implements AllergenRepositoryPort {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "allergens", key = "#id.value().toString()")
     public Optional<Allergen> findById(AllergenId id) {
         return repository.findById(id.value()).map(mapper::toDomain);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "allergens", key = "'all'")
     public List<Allergen> findAll() {
         return repository.findAll().stream().map(mapper::toDomain).collect(Collectors.toList());
     }
