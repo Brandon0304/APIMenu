@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16-alpine
@@ -17,6 +15,27 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - menu-network
+
+  app:
+    build: .
+    container_name: menu-api
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/menu_db
+      SPRING_DATASOURCE_USERNAME: menu_user
+      SPRING_DATASOURCE_PASSWORD: menu_pass
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - menu-network
+
+networks:
+  menu-network:
+    driver: bridge
 
 volumes:
   pgdata:
