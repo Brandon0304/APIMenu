@@ -17,9 +17,9 @@
         <module name="ParameterName"/>
         <module name="StaticVariableName"/>
         <module name="TypeName"/>
-        <module name="LeftCurly"/>
-        <module name="RightCurly"/>
-        <module name="NeedBraces"/>
+        <module name="NeedBraces">
+            <property name="allowSingleLineStatement" value="true"/>
+        </module>
         <module name="ModifierOrder"/>
         <module name="RedundantModifier"/>
         <module name="DefaultComesLast"/>
@@ -33,7 +33,7 @@
         <module name="MultipleVariableDeclarations"/>
     </module>
     <module name="LineLength">
-        <property name="max" value="140"/>
+        <property name="max" value="200"/>
     </module>
     <module name="FileTabCharacter"/>
 </module>

@@ -1,8 +1,9 @@
-package com.restaurant.menu.domain.model;
+package com.restaurant.menu.domain.exception;
 
 import static org.assertj.core.api.Assertions.*;
 
 import com.restaurant.menu.domain.exception.*;
+import com.restaurant.menu.domain.model.*;
 import org.junit.jupiter.api.Test;
 
 class DomainExceptionTest {
